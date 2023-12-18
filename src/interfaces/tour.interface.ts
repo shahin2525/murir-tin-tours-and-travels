@@ -7,6 +7,7 @@ interface ITour {
   ratingAverage: number
   ratingQuality: number
   price: number
+  availableSeats: number
   imageCover: string
   images: string[]
   startLocation: string

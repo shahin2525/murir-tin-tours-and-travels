@@ -1,15 +1,20 @@
-import express, { Application, Request, Response } from 'express'
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import express, { Application, NextFunction, Request, Response } from 'express'
 import { userRoutes } from './routes/user.route'
 import cors from 'cors'
 import { tourRoutes } from './routes/tour.route'
 import { reviewRoutes } from './routes/review.route'
-import notFound from './controllers/notFound.controller'
+
+import globalErrorhandler from './middlewares/globalErrorHandler'
+import notFound from './middlewares/notFoundRoute'
+import globalRoutes from './routes'
+// import notFound from './middlewares/notFoundRoute'
 const app: Application = express()
 app.use(express.json())
 app.use(cors())
-app.use('/api/v1/users/', userRoutes)
-app.use('/api/v1/tours/', tourRoutes)
-app.use('/api/v1/reviews/', reviewRoutes)
+app.use('/api/v1/', globalRoutes)
 
 app.get('/', (req: Request, res: Response) => {
   res.status(200).json({
@@ -18,11 +23,11 @@ app.get('/', (req: Request, res: Response) => {
   })
 })
 
-// catch all route _trying to catch a not found route
+// global error handler
+app.use(globalErrorhandler)
 
-// approach-1 for not found route
-// app.all('*', notFound)
-// approach-2 for not found route
+// catch all  not found route
+
 app.use(notFound)
 
 export default app

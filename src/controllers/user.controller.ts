@@ -1,100 +1,81 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 
 import { userServices } from '../services/user.service'
+import sendResponse from '../utils/sendResponse'
 
-const createUser = async (req: Request, res: Response) => {
+const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userData = req.body
-    // const result = await User.create(userData)
+
     const result = await userServices.createUser(userData)
-    res.status(201).json({
-      status: 'success',
-      message: 'user created successfully',
+    sendResponse(res, {
+      statusCode: 201,
+      message: 'user create successfully ',
       data: result,
     })
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
-    console.log(err)
-    res.status(500).json({
-      status: 'fail',
-      message: err.message || 'something went wrong',
-    })
+    next(err)
   }
 }
 
-const getAllUsers = async (req: Request, res: Response) => {
+const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const result = await userServices.getAllUsers()
-    res.status(200).json({
-      status: 'success',
-      message: 'allUser fetch successfully',
+
+    sendResponse(res, {
+      statusCode: 201,
+      message: 'Get all users successfully',
       data: result,
     })
-  } catch (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    err: any
-  ) {
-    res.status(500).json({
-      status: 'fail',
-      message: err.message || 'something went wrong',
-    })
+  } catch (err: any) {
+    next(err)
   }
 }
 
-const getSingleUser = async (req: Request, res: Response) => {
+const getSingleUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const id = req.params.id
     const result = await userServices.getSingleUser(id)
-    res.status(200).json({
-      status: 'success',
-      message: 'single user fetch successfully',
+    sendResponse(res, {
+      statusCode: 201,
+      message: 'Get single user successfully',
       data: result,
     })
-  } catch (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    error: any
-  ) {
-    res.status(500).json({
-      status: 'fail',
-      message: error.message || 'something went wrong',
-    })
+  } catch (error: any) {
+    next(error)
   }
 }
 
-const updateUser = async (req: Request, res: Response) => {
+const updateUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id
     const userData = req.body
     const result = await userServices.updateUser(id, userData)
-    res.status(200).json({
-      status: 'success',
-      message: 'updateUser successfully',
+    sendResponse(res, {
+      statusCode: 201,
+      message: 'update user successfully',
       data: result,
     })
-  } catch (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    error: any
-  ) {
-    res.status(500).json({
-      status: 'fail',
-      message: error.message || 'something went wrong',
-    })
+  } catch (error: any) {
+    next(error)
   }
 }
-const deleteUser = async (req: Request, res: Response) => {
+const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id
     await userServices.deleteUser(id)
-    res.status(200).json({
-      status: 'success',
-      message: 'user deleted successfully',
+    sendResponse(res, {
+      statusCode: 201,
+      message: 'delete user successfully',
+      data: null,
     })
   } catch (error: any) {
-    res.status(500).json({
-      status: 'fail',
-      message: error.message || 'something went wrong',
-    })
+    next(error)
   }
 }
 
