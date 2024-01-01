@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { startSession } from 'mongoose'
 import { IBooking } from '../interfaces/booking.interface'
 import Booking from '../models/booking.model'
 import Tour from '../models/tour.model'
+import GenericError from '../classess/errorClasses/GenericError'
 
 const createBooking = async (bookingData: IBooking): Promise<IBooking> => {
   // create transaction
@@ -13,7 +15,7 @@ const createBooking = async (bookingData: IBooking): Promise<IBooking> => {
     const booking = await Booking.create([bookingData], { session })
 
     if (!booking) {
-      throw new Error('booking failed to create ')
+      throw new GenericError('booking failed to create ', 400)
     }
 
     const tour = await Tour.findByIdAndUpdate(
@@ -28,17 +30,17 @@ const createBooking = async (bookingData: IBooking): Promise<IBooking> => {
       },
     )
     if (!tour) {
-      throw new Error('Tour update in booking failed')
+      throw new GenericError('Tour update in booking failed', 400)
     }
 
     await session.commitTransaction()
     await session.endSession()
 
     return booking[0]
-  } catch (error) {
+  } catch (error: any) {
     await session.abortTransaction()
     await session.endSession()
-    throw error
+    throw new GenericError(error.message, 400)
   }
 
   // return result

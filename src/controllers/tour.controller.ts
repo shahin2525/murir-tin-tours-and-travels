@@ -4,11 +4,13 @@ import { Request, Response } from 'express'
 import { tourServices } from '../services/tour.service'
 import catchAsync from '../utils/catchAsync'
 import sendResponse from '../utils/sendResponse'
+import { tourZodValidationSchema } from '../validation/tour.zod.validation'
 
 const createTour = catchAsync(async (req: Request, res: Response) => {
   const tourData = req.body
+  const validatedData = tourZodValidationSchema.parse(tourData)
 
-  const result = await tourServices.createTour(tourData)
+  const result = await tourServices.createTour(validatedData)
   sendResponse(res, {
     statusCode: 201,
     message: 'create tour  successfully',
